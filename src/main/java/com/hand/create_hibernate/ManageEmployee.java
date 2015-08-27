@@ -30,21 +30,21 @@ public class ManageEmployee {
       ManageEmployee ME = new ManageEmployee();
 
 //      添加数据
-//      Integer empID1 = ME.addEmployee("jky", "Ali", 1000);
-//      Integer empID2 = ME.addEmployee("Daisy", "Das", 5000);
-//      Integer empID3 = ME.addEmployee("John", "Paul", 10000);
+      Integer empID1 = ME.addEmployee("jky", "Ali", 1000);
+      Integer empID2 = ME.addEmployee("Daisy", "Das", 5000);
+      Integer empID3 = ME.addEmployee("John", "Paul", 10000);
 
 //      调用列出所有的信息的方法
-//      ME.listEmployees();
+      ME.listEmployees();
 
 //      调用更新数据的方法
-//      ME.updateEmployee(empID1, 5000);
+      ME.updateEmployee(empID1, 5000);
 
 //      调用删除数据方法
 //      ME.deleteEmployee(empID2);
 
 //      列出所有用户
-//      ME.listEmployees();
+      ME.listEmployees();
       
 //      查询工资超过5000的员工
 //      ME.Employees_for_salary(5000);
@@ -58,7 +58,7 @@ public class ManageEmployee {
    }
 //   实现增加数据
    public Integer addEmployee(String fname, String lname, int salary){
-      Session session = factory.openSession();
+      Session session = factory.openSession(new MyInterceptor());
       Transaction tx = null;
       Integer employeeID = null;
       try{
@@ -82,7 +82,7 @@ public class ManageEmployee {
    }
 //   实现读取数据
    public void listEmployees( ){
-      Session session = factory.openSession();
+      Session session = factory.openSession(new MyInterceptor());
       Transaction tx = null;
       try{
          tx = session.beginTransaction();
@@ -110,7 +110,7 @@ public class ManageEmployee {
    }
 //   实现更新数据
    public void updateEmployee(Integer EmployeeID, int salary ){
-      Session session = factory.openSession();
+      Session session = factory.openSession(new MyInterceptor());
       Transaction tx = null;
       try{
          tx = session.beginTransaction();
@@ -118,7 +118,7 @@ public class ManageEmployee {
                     (Employee)session.get(Employee.class, EmployeeID); 
          employee.setSalary( salary );
          session.update(employee); 
-         System.out.println("将ID为："+EmployeeID+"的工资改为了："+salary);
+         System.out.println("将员工ID为："+EmployeeID+"的工资改为了："+salary);
          tx.commit();
       }catch (HibernateException e) {
          if (tx!=null) tx.rollback();
@@ -129,7 +129,7 @@ public class ManageEmployee {
    }
 //   实现删除数据
    public void deleteEmployee(Integer EmployeeID){
-      Session session = factory.openSession();
+      Session session = factory.openSession(new MyInterceptor());
       Transaction tx = null;
       try{
          tx = session.beginTransaction();
@@ -147,7 +147,7 @@ public class ManageEmployee {
 //   标准查询
 //   查找超过指定工资的员工
    public void Employees_for_salary(int salary){
-	   Session session = factory.openSession();
+	   Session session = factory.openSession(new MyInterceptor());
 	   Transaction tx = null;
 	   try {
 		   tx = session.beginTransaction();
@@ -172,7 +172,7 @@ public class ManageEmployee {
    }
 //   计算员工数量
    public void countEmployee(){
-	      Session session = factory.openSession();
+	      Session session = factory.openSession(new MyInterceptor());
 	      Transaction tx = null;
 	      try{
 	         tx = session.beginTransaction();
@@ -193,7 +193,7 @@ public class ManageEmployee {
 	   }
 //	  计算总工资
 	   public void totalSalary(){
-	      Session session = factory.openSession();
+	      Session session = factory.openSession(new MyInterceptor());
 	      Transaction tx = null;
 	      try{
 	         tx = session.beginTransaction();
@@ -214,7 +214,7 @@ public class ManageEmployee {
 	   }
 //	   进行批处理插入数据
 	   public void big_addEmployees(){
-		   Session session = factory.openSession();
+		   Session session = factory.openSession(new MyInterceptor());
 		   Transaction tx=null;
 		   Integer EmployeeID = null;
 		   try {
