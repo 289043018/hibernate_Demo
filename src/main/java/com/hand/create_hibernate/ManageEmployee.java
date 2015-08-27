@@ -7,45 +7,57 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session; 
 import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 
 public class ManageEmployee {
+	//定义一个session工厂
    private static SessionFactory factory; 
    public static void main(String[] args) {
       try{
-         factory = new Configuration().configure().buildSessionFactory();
+    	  //通过session工厂获取JDBC配置信息
+//         factory = new Configuration().configure().buildSessionFactory();
+    	  factory = new AnnotationConfiguration().configure().addPackage("com.hand.create_hibernate")
+    			  .addAnnotatedClass(Employee.class).buildSessionFactory();
+         
       }catch (Throwable ex) { 
          System.err.println("Failed to create sessionFactory object." + ex);
          throw new ExceptionInInitializerError(ex); 
       }
       ManageEmployee ME = new ManageEmployee();
 
-      /* Add few employee records in database */
-      Integer empID1 = ME.addEmployee("Zara", "Ali", 1000);
+//      添加数据
+      Integer empID1 = ME.addEmployee("jky", "Ali", 1000);
       Integer empID2 = ME.addEmployee("Daisy", "Das", 5000);
       Integer empID3 = ME.addEmployee("John", "Paul", 10000);
 
-      /* List down all the employees */
+//      调用列出所有的信息的方法
       ME.listEmployees();
 
-      /* Update employee's records */
+//      调用更新数据的方法
       ME.updateEmployee(empID1, 5000);
 
-      /* Delete an employee from the database */
+//      调用删除数据方法
       ME.deleteEmployee(empID2);
 
-      /* List down new list of the employees */
+//      列出所有用户
       ME.listEmployees();
    }
-   /* Method to CREATE an employee in the database */
+//   实现增加数据
    public Integer addEmployee(String fname, String lname, int salary){
       Session session = factory.openSession();
       Transaction tx = null;
       Integer employeeID = null;
       try{
          tx = session.beginTransaction();
-         Employee employee = new Employee(fname, lname, salary);
-         employeeID = (Integer) session.save(employee); 
+//         Employee employee = new Employee(fname, lname, salary);
+//         employeeID = (Integer) session.save(employee); 
+         Employee employee = new Employee();
+         employee.setFirstName(fname);
+         employee.setLastName(lname);
+         employee.setSalary(salary);
+         employeeID = (Integer) session.save(employee);
+         System.out.println("添加了数据："+fname+","+lname+", "+salary);
          tx.commit();
       }catch (HibernateException e) {
          if (tx!=null) tx.rollback();
@@ -55,7 +67,7 @@ public class ManageEmployee {
       }
       return employeeID;
    }
-   /* Method to  READ all the employees */
+//   实现读取数据
    public void listEmployees( ){
       Session session = factory.openSession();
       Transaction tx = null;
@@ -77,7 +89,7 @@ public class ManageEmployee {
          session.close(); 
       }
    }
-   /* Method to UPDATE salary for an employee */
+//   实现更新数据
    public void updateEmployee(Integer EmployeeID, int salary ){
       Session session = factory.openSession();
       Transaction tx = null;
@@ -87,6 +99,7 @@ public class ManageEmployee {
                     (Employee)session.get(Employee.class, EmployeeID); 
          employee.setSalary( salary );
          session.update(employee); 
+         System.out.println("将ID为："+EmployeeID+"的工资改为了："+salary);
          tx.commit();
       }catch (HibernateException e) {
          if (tx!=null) tx.rollback();
@@ -95,7 +108,7 @@ public class ManageEmployee {
          session.close(); 
       }
    }
-   /* Method to DELETE an employee from the records */
+//   实现删除数据
    public void deleteEmployee(Integer EmployeeID){
       Session session = factory.openSession();
       Transaction tx = null;

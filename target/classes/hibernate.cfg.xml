@@ -9,6 +9,7 @@
 <property name="hibernate.connection.username"> root </property>
 <property name="hibernate.connection.password"> root </property>
 <!-- List of XML mapping files -->
-<mapping resource="Employee.hbm.xml"/> 
+<!-- 使用注释方法，是不需要映射文件的 -->
+<!-- <mapping resource="Employee.hbm.xml"/>  -->
 </session-factory>
 </hibernate-configuration> 

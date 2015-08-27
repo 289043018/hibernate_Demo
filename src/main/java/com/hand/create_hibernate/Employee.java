@@ -1,10 +1,22 @@
 package com.hand.create_hibernate;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="EMPLOYEE")
 public class Employee {
 
+	@Id @GeneratedValue
+	@Column(name="id")
 	private int id;
+	
+	@Column(name="first_name")
 	private String firstName; 
-	private String lastName;   
+	
+	@Column(name="last_name")
+	private String lastName;
+	
+	@Column(name = "salary")
 	private int salary;  
 
 	public Employee() {}
