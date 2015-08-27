@@ -1,14 +1,17 @@
 package com.hand.create_hibernate;
 import java.util.List; 
 import java.util.Date;
-import java.util.Iterator; 
+import java.util.Iterator;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException; 
 import org.hibernate.Session; 
 import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 public class ManageEmployee {
 	//定义一个session工厂
@@ -42,6 +45,14 @@ public class ManageEmployee {
 
 //      列出所有用户
       ME.listEmployees();
+      
+//      查询工资超过5000的员工
+      ME.Employees_for_salary(5000);
+      
+      ME.totalSalary();
+      
+      ME.countEmployee();
+      
    }
 //   实现增加数据
    public Integer addEmployee(String fname, String lname, int salary){
@@ -73,6 +84,12 @@ public class ManageEmployee {
       Transaction tx = null;
       try{
          tx = session.beginTransaction();
+//         分步使用hql查询数据
+//         String hql = "FROM Employee";//这里的Empolyee并不是指表名，而是指持久化类中的文件名称。
+//         如果要限定包名的持久化类，则要使用 "FROM com.hibernatebook.criteria.Employee"
+//         Query query = session.createQuery(hql);
+//         List results = query.list();
+//         一步完成hql查询数据
          List employees = session.createQuery("FROM Employee").list(); 
          for (Iterator iterator = 
                            employees.iterator(); iterator.hasNext();){
@@ -125,4 +142,76 @@ public class ManageEmployee {
          session.close(); 
       }
    }
+//   标准查询
+//   查找超过指定工资的员工
+   public void Employees_for_salary(int salary){
+	   Session session = factory.openSession();
+	   Transaction tx = null;
+	   try {
+		   tx = session.beginTransaction();
+		   Criteria cr = session.createCriteria(Employee.class);
+		   cr.add(Restrictions.gt("salary", salary));
+		   List employees = cr.list();
+		   System.out.println("以下是工资为："+salary+"的员工。");
+		   for (Iterator iterator = employees.iterator();iterator.hasNext();) {
+			   Employee employee = (Employee) iterator.next();
+			   System.out.print("First Name: " + employee.getFirstName()); 
+	            System.out.print("  Last Name: " + employee.getLastName()); 
+	            System.out.println("  Salary: " + employee.getSalary()); 
+		}
+		   tx.commit();
+		
+	} catch (HibernateException e) {
+		
+		e.printStackTrace();
+	}finally {
+		session.close();
+	}
+   }
+   
+   public void countEmployee(){
+	      Session session = factory.openSession();
+	      Transaction tx = null;
+	      try{
+	         tx = session.beginTransaction();
+	         Criteria cr = session.createCriteria(Employee.class);
+
+	         // To get total row count.
+	         cr.setProjection(Projections.rowCount());
+	         List rowCount = cr.list();
+
+	         System.out.println("工资总数为: " + rowCount.get(0) );
+	         tx.commit();
+	      }catch (HibernateException e) {
+	         if (tx!=null) tx.rollback();
+	         e.printStackTrace(); 
+	      }finally {
+	         session.close(); 
+	      }
+	   }
+	  /* Method to print sum of salaries */
+	   public void totalSalary(){
+	      Session session = factory.openSession();
+	      Transaction tx = null;
+	      try{
+	         tx = session.beginTransaction();
+	         Criteria cr = session.createCriteria(Employee.class);
+
+	         // To get total salary.
+	         cr.setProjection(Projections.sum("salary"));
+	         List totalSalary = cr.list();
+
+	         System.out.println("员工人数为: " + totalSalary.get(0) );
+	         tx.commit();
+	      }catch (HibernateException e) {
+	         if (tx!=null) tx.rollback();
+	         e.printStackTrace(); 
+	      }finally {
+	         session.close(); 
+	      }
+	   }
+   
+   
+   
+   
 }
