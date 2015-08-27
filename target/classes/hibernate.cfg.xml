@@ -8,6 +8,7 @@
 <property name="hibernate.connection.url"> jdbc:mysql://localhost:3306/text </property>
 <property name="hibernate.connection.username"> root </property>
 <property name="hibernate.connection.password"> root </property>
+<property name="hibernate.jdbc.batch_size">50</property>
 <!-- List of XML mapping files -->
 <!-- 使用注释方法，是不需要映射文件的 -->
 <!-- <mapping resource="Employee.hbm.xml"/>  -->

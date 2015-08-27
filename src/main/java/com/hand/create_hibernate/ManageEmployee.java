@@ -30,28 +30,30 @@ public class ManageEmployee {
       ManageEmployee ME = new ManageEmployee();
 
 //      添加数据
-      Integer empID1 = ME.addEmployee("jky", "Ali", 1000);
-      Integer empID2 = ME.addEmployee("Daisy", "Das", 5000);
-      Integer empID3 = ME.addEmployee("John", "Paul", 10000);
+//      Integer empID1 = ME.addEmployee("jky", "Ali", 1000);
+//      Integer empID2 = ME.addEmployee("Daisy", "Das", 5000);
+//      Integer empID3 = ME.addEmployee("John", "Paul", 10000);
 
 //      调用列出所有的信息的方法
-      ME.listEmployees();
+//      ME.listEmployees();
 
 //      调用更新数据的方法
-      ME.updateEmployee(empID1, 5000);
+//      ME.updateEmployee(empID1, 5000);
 
 //      调用删除数据方法
-      ME.deleteEmployee(empID2);
+//      ME.deleteEmployee(empID2);
 
 //      列出所有用户
-      ME.listEmployees();
+//      ME.listEmployees();
       
 //      查询工资超过5000的员工
-      ME.Employees_for_salary(5000);
+//      ME.Employees_for_salary(5000);
       
-      ME.totalSalary();
+//      ME.totalSalary();
       
-      ME.countEmployee();
+//      ME.countEmployee();
+//      使用批处理，插入10W条记录
+//      ME.big_addEmployees();
       
    }
 //   实现增加数据
@@ -168,7 +170,7 @@ public class ManageEmployee {
 		session.close();
 	}
    }
-   
+//   计算员工数量
    public void countEmployee(){
 	      Session session = factory.openSession();
 	      Transaction tx = null;
@@ -189,7 +191,7 @@ public class ManageEmployee {
 	         session.close(); 
 	      }
 	   }
-	  /* Method to print sum of salaries */
+//	  计算总工资
 	   public void totalSalary(){
 	      Session session = factory.openSession();
 	      Transaction tx = null;
@@ -210,7 +212,34 @@ public class ManageEmployee {
 	         session.close(); 
 	      }
 	   }
-   
+//	   进行批处理插入数据
+	   public void big_addEmployees(){
+		   Session session = factory.openSession();
+		   Transaction tx=null;
+		   Integer EmployeeID = null;
+		   try {
+			   tx = session.beginTransaction();
+			   for(int i = 0;i <100000 ; i++){
+				   String fname = "First Name"+i;
+				   String lname = "Last Name"+i;
+				   Integer salary = i;
+				   Employee employee = new Employee(fname,lname,salary);
+				   session.save(employee);
+				   if(i%50 == 0){
+					   session.flush();
+					   session.clear();
+				   }
+			   }
+			   System.out.println("批量插入数据成功");
+			   tx.commit();
+			
+		} catch (HibernateException e) {
+			if(tx!=null) tx.rollback();
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+	   }
    
    
    
